@@ -1,5 +1,6 @@
-# Ignore everything in this directory
+# Ignore everything in these directories
 build/
+env_for_openfhe_wheel/
 
 # Prerequisites
 *.d
