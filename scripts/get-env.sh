@@ -7,9 +7,9 @@ if [ ! -d ${VENV_DIR} ]; then
     . ${VENV_DIR}/bin/activate
 
     # install all necessary packages
-    pip install "pybind11[global]"
+    python3 -m pip install "pybind11[global]"
     # pip install pybind11-stubgen
-    pip install --upgrade pip setuptools wheel build
+    python3 -m pip install --upgrade pip setuptools wheel build
 else
     # source ${VENV_DIR}/bin/activate
     . ${VENV_DIR}/bin/activate
