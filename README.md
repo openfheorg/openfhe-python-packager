@@ -5,16 +5,14 @@
 
 ### Prerequisites
 
-Before building, make sure you have installed all dependencies required by 
+Before building, make sure you have installed all dependencies **(do not clone these repos)**:
 
-- [openfhe-development](https://github.com/openfheorg/openfhe-development)
-- [openfhe-python](https://pybind11.readthedocs.io/en/stable/installing.html)
-
-**Attention:** You DO NOT clone those repos, should install the packages required by them only.
+- for [openfhe-development](https://github.com/openfheorg/openfhe-development).
+- for [openfhe-python](https://pybind11.readthedocs.io/en/stable/installing.html) you need to have only 2 packages installed: python3 and python3-pip.
 
 ### Building a new wheel
 
-- Adjust settings in [ci-vars.sh](https://github.com/openfheorg/openfhe-python-packager/blob/main/ci-vars.sh) as needed
-- Run [build_all.sh](https://github.com/openfheorg/openfhe-python-packager/blob/main/build_all.sh)
-
-If the build is successfull, the wheel will be in **./build/dist**
+- Adjust settings in [ci-vars.sh](https://github.com/openfheorg/openfhe-python-packager/blob/main/ci-vars.sh) as needed.
+- Run [build_openfhe_wheel.sh](https://github.com/openfheorg/openfhe-python-packager/blob/main/build_openfhe_wheel.sh).
+- The package built for distribution will be available in **./build/dist**.
+- The wheel includes a file **openfhe/build-config.txt** with all settings from ci-vars.sh used to build the wheel. 
