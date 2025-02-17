@@ -43,5 +43,8 @@ setup(
         "Operating System :: POSIX :: Linux",
         # add other classifiers as needed
     ],
+    long_description=ci_vars["LONG_DESCRIPTION"],
+    long_description_content_type='text/markdown',  # format
+
 )
 
