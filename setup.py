@@ -38,7 +38,7 @@ setup(
     package_data={
         'openfhe': ['lib/*.so', 'lib/*.so.1', '*.so', 'build-config.txt'],
     },
-    python_requires=">=3.10",
+    python_requires=">=" + ci_vars["PYTHON_VERSION"],
     classifiers=[
         "Operating System :: POSIX :: Linux",
         # add other classifiers as needed
