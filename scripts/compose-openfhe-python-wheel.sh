@@ -4,6 +4,7 @@
 . ./scripts/common-functions.sh
 
 # WHEEL [OUTPUT] VERSION
+WHEEL_VERSION=$(get_wheel_version ${OPENFHE_TAG} ${WHEEL_MINOR_VERSION} ${OS_RELEASE})
 if [ -z "$WHEEL_VERSION" ]; then
   abort "${0}: WHEEL_VERSION has not been specified."
 fi
@@ -46,6 +47,7 @@ cp ${INSTALL_PATH}/lib/*.so.1 ${WHEEL_ROOT}/openfhe/lib
 ### Adding all necessary libraries
 ############################################################################
 echo "Adding libgomp.so ..."
+CXX_COMPILER=$(get_compiler_version "g++")
 libgomp_path=$(${CXX_COMPILER} -print-file-name=libgomp.so)
 # Check if the returned string is a path (i.e., not just "libgomp.so")
 if [ "${libgomp_path}" != "libgomp.so" ]; then

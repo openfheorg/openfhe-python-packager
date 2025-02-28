@@ -1,5 +1,7 @@
 import os
 import subprocess
+import sys
+from setuptools import setup, find_packages
 
 def get_ci_vars(filepath):
     ci_vars = {}
@@ -20,13 +22,20 @@ def get_ci_vars(filepath):
 # get values from ci-vars.sh
 filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ci-vars.sh")
 ci_vars = get_ci_vars(filepath)
-###################################################################################
+###
+get_version = (
+    'bash -c "source ./scripts/common-functions.sh && get_wheel_version \\"{}\\" \\"{}\\" \\"{}\\""'
+).format(ci_vars["OPENFHE_TAG"], ci_vars["WHEEL_MINOR_VERSION"], ci_vars["OS_RELEASE"])
 
-from setuptools import setup, find_packages
+get_long_descr = (
+    'bash -c "source ./scripts/common-functions.sh && get_long_description \\"{}\\" \\"{}\\""'
+).format(ci_vars["OS_NAME"], ci_vars["OS_RELEASE"])
+
+###################################################################################
 
 setup(
     name='openfhe',
-    version=ci_vars["WHEEL_VERSION"],
+    version=subprocess.run(get_version, shell=True, capture_output=True, text=True).stdout,
     description='Python wrapper for OpenFHE C++ library.',
     author='OpenFHE Team',
     author_email='contact@openfhe.org',
@@ -38,12 +47,12 @@ setup(
     package_data={
         'openfhe': ['lib/*.so', 'lib/*.so.1', '*.so', 'build-config.txt'],
     },
-    python_requires=">=" + ci_vars["PYTHON_VERSION"],
+    python_requires=f">={sys.version_info.major}.{sys.version_info.minor}",
     classifiers=[
         "Operating System :: POSIX :: Linux",
         # add other classifiers as needed
     ],
-    long_description=ci_vars["LONG_DESCRIPTION"],
+    long_description=subprocess.run(get_long_descr, shell=True, capture_output=True, text=True).stdout,
     long_description_content_type='text/markdown',  # format
 
 )

@@ -6,7 +6,7 @@
 ROOT=$(pwd)
 BUILD_DIR=${ROOT}/build
 echo "${0}: BUILD_DIR - ${BUILD_DIR}"
-CMAKE_DEFAULT_ARGS=$(get_cmake_default_args ${BUILD_DIR} ${CXX_COMPILER} ${C_COMPILER})
+CMAKE_DEFAULT_ARGS=$(get_cmake_default_args ${BUILD_DIR})
 echo "CMAKE_DEFAULT_ARGS: ${CMAKE_DEFAULT_ARGS}"
 
 ### build openfhe-development

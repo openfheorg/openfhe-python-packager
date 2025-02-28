@@ -42,12 +42,45 @@ get_install_path()
   echo "${INSTALL_PATH}"
 }
 
+# ATTN: get_wheel_version MUST NOT print anything else, but ${VERSION} !!!
+get_wheel_version()
+{
+  OPENFHE_TAG=${1}
+  WHEEL_MINOR_VERSION=${2}
+  OS_RELEASE=${3}
+
+  VERSION="${OPENFHE_TAG#v}.${WHEEL_MINOR_VERSION}.${OS_RELEASE}"
+
+  echo ${VERSION}
+}
+
+# ATTN: get_long_description MUST NOT print anything else, but ${LONG_DESCRIPTION} !!!
+get_long_description()
+{
+  OS_NAME=${1}
+  OS_RELEASE=${2}
+
+  LONG_DESCRIPTION="This release requires ${OS_NAME} ${OS_RELEASE}"
+
+  echo ${LONG_DESCRIPTION}
+}
+
+get_compiler_version()
+{
+  COMPILER=${1} # "g++"" or "gcc"
+  # get major compiler version
+  compiler_version=$(${COMPILER} --version | head -n1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1 | cut -d. -f1)
+
+  echo "${COMPILER}-${compiler_version}"
+}
+
 # ATTN: get_cmake_default_args MUST NOT print anything else, but ${CMAKE_DEFAULT_ARGS} !!!
 get_cmake_default_args()
 {
   ROOT=${1}
-  CXX_COMPILER=${2}
-  C_COMPILER=${3}
+  # get compiler version
+  CXX_COMPILER=$(get_compiler_version "g++")
+  C_COMPILER=$(get_compiler_version "gcc")
 
   INSTALL_PATH=$(get_install_path ${ROOT})
 
