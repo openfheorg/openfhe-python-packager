@@ -20,9 +20,6 @@ RUN apt-get update && apt-get install -y \
 RUN apt-get update && apt-get install -y \
         python3-venv \
         && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install -y \
-        python3-twine \
-        && rm -rf /var/lib/apt/lists/*
 
 # Set a working directory inside the container (optional)
 WORKDIR /root
