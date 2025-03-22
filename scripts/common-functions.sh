@@ -45,11 +45,15 @@ get_install_path()
 # ATTN: get_wheel_version MUST NOT print anything else, but ${VERSION} !!!
 get_wheel_version()
 {
-  OPENFHE_TAG=${1}
-  WHEEL_MINOR_VERSION=${2}
-  OS_RELEASE=${3}
+  OS_RELEASE=${1}
+  OPENFHE_TAG=${2}
+  WHEEL_MINOR_VERSION=${3}
+  WHEEL_TEST_VERSION=${4}
 
   VERSION="${OPENFHE_TAG#v}.${WHEEL_MINOR_VERSION}.${OS_RELEASE}"
+  if [ -n "${WHEEL_TEST_VERSION}" ]; then
+    VERSION="${VERSION}.dev${WHEEL_TEST_VERSION}"
+  fi
 
   echo ${VERSION}
 }

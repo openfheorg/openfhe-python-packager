@@ -24,8 +24,8 @@ filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ci-vars.sh"
 ci_vars = get_ci_vars(filepath)
 ###
 get_version = (
-    'bash -c "source ./scripts/common-functions.sh && get_wheel_version \\"{}\\" \\"{}\\" \\"{}\\""'
-).format(ci_vars["OPENFHE_TAG"], ci_vars["WHEEL_MINOR_VERSION"], ci_vars["OS_RELEASE"])
+    'bash -c "source ./scripts/common-functions.sh && get_wheel_version \\"{}\\" \\"{}\\" \\"{}\\" \\"{}\\""'
+).format(ci_vars["OS_RELEASE"], ci_vars["OPENFHE_TAG"], ci_vars["WHEEL_MINOR_VERSION"], ci_vars["WHEEL_TEST_VERSION"])
 
 get_long_descr = (
     'bash -c "source ./scripts/common-functions.sh && get_long_description \\"{}\\" \\"{}\\""'

@@ -4,7 +4,7 @@
 . ./scripts/common-functions.sh
 
 # WHEEL [OUTPUT] VERSION
-WHEEL_VERSION=$(get_wheel_version ${OPENFHE_TAG} ${WHEEL_MINOR_VERSION} ${OS_RELEASE})
+WHEEL_VERSION=$(get_wheel_version ${OS_RELEASE} ${OPENFHE_TAG} ${WHEEL_MINOR_VERSION} ${WHEEL_TEST_VERSION})
 if [ -z "$WHEEL_VERSION" ]; then
   abort "${0}: WHEEL_VERSION has not been specified."
 fi
