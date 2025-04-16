@@ -28,5 +28,12 @@ WORKDIR /root
 RUN git clone https://github.com/openfheorg/openfhe-python-packager.git
 
 # Set the default command to run when the container starts
-CMD ["/bin/bash"]
+### CMD ["/bin/bash"]
+
+# build the wheel
+WORKDIR /root/openfhe-python-packager
+RUN git fetch origin; git pull origin; git status
+RUN git checkout docker-build
+
+RUN /root/openfhe-python-packager/build_openfhe_wheel.sh
 
