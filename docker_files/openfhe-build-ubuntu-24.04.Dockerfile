@@ -1,4 +1,4 @@
-# Use Ubuntu 24.04 as the base image
+# Use Ubuntu 24.04 as the base image and set the correct OS description in ci-vars.sh below
 FROM ubuntu:24.04
 
 # Set environment variable to disable interactive prompts during package installs
@@ -30,10 +30,17 @@ RUN git clone https://github.com/openfheorg/openfhe-python-packager.git
 # Set the default command to run when the container starts
 ### CMD ["/bin/bash"]
 
-# build the wheel
+# prepare to build the wheel
 WORKDIR /root/openfhe-python-packager
-RUN git fetch origin; git pull origin; git status
-RUN git checkout docker-build
 
+# for testing purposes:
+# # # RUN git fetch origin; git pull origin; git status
+# # # RUN git checkout docker-build
+
+# override ci-vars.sh with the correct os name and release
+RUN sed -i '/^OS_NAME=/c\OS_NAME=Ubuntu' /root/openfhe-python-packager/ci-vars.sh
+RUN sed -i '/^OS_RELEASE=/c\OS_RELEASE=24.04' /root/openfhe-python-packager/ci-vars.sh
+
+# build the wheel
 RUN /root/openfhe-python-packager/build_openfhe_wheel.sh
 
