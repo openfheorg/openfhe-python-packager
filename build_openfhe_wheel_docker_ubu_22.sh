@@ -21,3 +21,6 @@ docker cp temp-container:/root/openfhe-python-packager/build/dist ${LOCAL_DIR}
 # cleanup
 docker rm temp-container
 
+# change the owner of all files in the current directory from root to the local user
+chown -R "$SUDO_USER" "${LOCAL_DIR}"
+
