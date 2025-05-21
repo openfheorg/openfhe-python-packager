@@ -1,7 +1,7 @@
 OS_NAME=Ubuntu
 OS_RELEASE=24.04
-OPENFHE_TAG=v1.2.4
-OPENFHE_PYTHON_TAG=v0.8.10
+OPENFHE_TAG=v1.3.0
+OPENFHE_PYTHON_TAG=v1.3.0.0
 # subsequent release number for the given OPENFHE_TAG.
 WHEEL_MINOR_VERSION=0
 # Example of a wheel version based on the vars values in this file:
