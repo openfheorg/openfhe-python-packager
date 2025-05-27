@@ -1,7 +1,7 @@
 #!/bin/sh
 
 OS_NAME=ubuntu
-OS_RELEASE=22.04
+OS_RELEASE=20.04
 
 LOCAL_DIR=./wheel_${OS_NAME}_${OS_RELEASE}
 rm -rf ${LOCAL_DIR}
