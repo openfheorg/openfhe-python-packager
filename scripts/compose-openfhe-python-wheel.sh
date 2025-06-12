@@ -35,7 +35,7 @@ INSTALL_PATH=$(get_install_path ${BUILD_DIR})
 # add libOPENFHE*.so to the wheel
 cp ${INSTALL_PATH}/*.so ${WHEEL_ROOT}/openfhe
 # add __init__.py to the wheel
-cp ${ROOT}/__init__.py ${WHEEL_ROOT}/openfhe
+cp ${INSTALL_PATH}/__init__.py ${WHEEL_ROOT}/openfhe
 # add ci-vars.sh as build-config.txt to the wheel for reference
 cp ${ROOT}/ci-vars.sh ${WHEEL_ROOT}/openfhe/build-config.txt
 chmod 644 ${WHEEL_ROOT}/openfhe/build-config.txt
