@@ -33,10 +33,14 @@ get_long_descr = (
 
 ###################################################################################
 
+version=subprocess.run(get_version, shell=True, capture_output=True, text=True).stdout.strip()
+long_description=subprocess.run(get_long_descr, shell=True, capture_output=True, text=True).stdout.strip()
 setup(
     name='openfhe',
-    version=subprocess.run(get_version, shell=True, capture_output=True, text=True).stdout,
+    version=version,
     description='Python wrapper for OpenFHE C++ library.',
+    long_description=long_description,
+    long_description_content_type='text/markdown',  # format
     author='OpenFHE Team',
     author_email='contact@openfhe.org',
     url='https://github.com/openfheorg/openfhe-python',
@@ -52,8 +56,6 @@ setup(
         "Operating System :: POSIX :: Linux",
         # add other classifiers as needed
     ],
-    long_description=subprocess.run(get_long_descr, shell=True, capture_output=True, text=True).stdout,
-    long_description_content_type='text/markdown',  # format
-
+    zip_safe=False,
 )
 
