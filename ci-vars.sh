@@ -1,7 +1,7 @@
 OS_NAME=Ubuntu
 OS_RELEASE=24.04
-OPENFHE_TAG=v1.3.0
-OPENFHE_PYTHON_TAG=v1.3.0.0
+OPENFHE_TAG=v1.3.0.0.1
+OPENFHE_PYTHON_TAG=v1.3.0.0.1
 # subsequent release number for the given OPENFHE_TAG.
 WHEEL_MINOR_VERSION=0
 # Example of a wheel version based on the vars values in this file:
@@ -12,7 +12,7 @@ WHEEL_MINOR_VERSION=0
 
 # DO NOT set WHEEL_TEST_VERSION unless you are building a test/dev wheel.
 # if WHEEL_TEST_VERSION=5 then the wheel version will be: 1.2.3.9.20.04.dev5
-WHEEL_TEST_VERSION=
+WHEEL_TEST_VERSION=1
 
 # PARALELLISM is used to expedite the build process in ./scripts/common-functions.sh
 PARALELLISM=11
