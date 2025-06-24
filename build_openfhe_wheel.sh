@@ -14,6 +14,12 @@ separator
 echo "Activated virtual environment: \"$(basename "$VIRTUAL_ENV")\""
 separator
 
+# print build configuration
+echo "ci-vars.sh:"
+separator
+cat ./ci-vars.sh
+separator
+
 # build openfhe-development and openfhe-python
 ./scripts/build-binaries.sh
 
