@@ -1,4 +1,5 @@
 #!/bin/sh
+. ./ci-vars.sh
 
 OS_NAME=ubuntu
 OS_RELEASE=24.04
@@ -11,7 +12,11 @@ CONTAINER_NAME=openfhe-build:${OS_NAME}_${OS_RELEASE}
 DOCKER_FILE=openfhe-build-${OS_NAME}-${OS_RELEASE}.Dockerfile
 echo "===== Building ${CONTAINER_NAME} from ${DOCKER_FILE}"
 
-docker build -f docker_files/${DOCKER_FILE} -t ${CONTAINER_NAME} . --progress=plain || abort "${CONTAINER_NAME} failed"
+docker build                                                \
+    -f docker_files/${DOCKER_FILE}                          \
+    -t ${CONTAINER_NAME}                                    \
+    --build-arg PACKAGER_TAG=${OPENFHE_PYTHON_PACKAGER_TAG} \
+    . --progress=plain || abort "${CONTAINER_NAME} failed"
 
 # copy the wheel to the local machine
 mkdir -m 777 ${LOCAL_DIR}

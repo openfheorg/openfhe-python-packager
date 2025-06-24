@@ -4,6 +4,10 @@ FROM ubuntu:24.04
 # Set environment variable to disable interactive prompts during package installs
 ENV DEBIAN_FRONTEND=noninteractive
 
+# tag for the packager
+ARG PACKAGER_TAG
+ENV OPENFHE_PYTHON_PACKAGER_TAG=${PACKAGER_TAG}
+
 # Update package lists and install essential utilities (optional)
 RUN apt-get update && apt-get install -y \
         git \
@@ -24,14 +28,17 @@ RUN apt-get update && apt-get install -y \
 # Set a working directory inside the container (optional)
 WORKDIR /root
 
-# clone openfhe-python-packager to /root
-RUN git clone https://github.com/openfheorg/openfhe-python-packager.git
+# clone openfhe-python-packager to /root and switch to the correct version of it
+RUN git clone https://github.com/openfheorg/openfhe-python-packager.git /root/openfhe-python-packager && \
+    cd /root/openfhe-python-packager && \
+    git checkout ${OPENFHE_PYTHON_PACKAGER_TAG}
 
 # Set the default command to run when the container starts
 ### CMD ["/bin/bash"]
 
 # prepare to build the wheel
 WORKDIR /root/openfhe-python-packager
+RUN cat /root/openfhe-python-packager/ci-vars.sh
 
 # for testing purposes:
 # # # RUN git fetch origin; git pull origin; git status
