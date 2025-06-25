@@ -88,6 +88,11 @@ get_cmake_default_args()
 
   INSTALL_PATH=$(get_install_path ${ROOT})
 
+  # # we have to pass the location of OpenFHE aas an argument
+  # OpenFHE_DIR=$(python3 -c "import openfhe; print(openfhe.__path__[0] + '/lib/OpenFHE')")
+
+  # CMAKE_DEFAULT_ARGS="-DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DCMAKE_PREFIX_PATH=$OpenFHE_DIR"
+
   CMAKE_DEFAULT_ARGS="-DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DCMAKE_PREFIX_PATH=$INSTALL_PATH"
   CMAKE_DEFAULT_ARGS=${CMAKE_DEFAULT_ARGS}" -DCMAKE_CXX_COMPILER=${CXX_COMPILER} -DCMAKE_C_COMPILER=${C_COMPILER}"
 

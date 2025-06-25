@@ -40,8 +40,10 @@ cp ${INSTALL_PATH}/__init__.py ${WHEEL_ROOT}/openfhe
 cp ${ROOT}/ci-vars.sh ${WHEEL_ROOT}/openfhe/build-config.txt
 chmod 644 ${WHEEL_ROOT}/openfhe/build-config.txt
 
-echo "OPENFHE_PYTHON libraries"
+echo "OPENFHE module"
 cp ${INSTALL_PATH}/lib/*.so.1 ${WHEEL_ROOT}/openfhe/lib
+# files necessary for find_package()
+# cp -r ${INSTALL_PATH}/lib/OpenFHE/ ${WHEEL_ROOT}/openfhe/lib
 
 ############################################################################
 ### Adding all necessary libraries
