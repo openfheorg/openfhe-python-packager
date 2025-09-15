@@ -103,7 +103,7 @@ build_install_tag_with_args()
   DIR=${1}
   TAG=${2}
   CMAKE_ARGS=${3}
-  PARALELLISM=${4}
+  PARALLELISM=${4}
   OS_TYPE="$(uname)"
 
   cd $DIR || abort "unable to cd into $DIR"
@@ -128,7 +128,7 @@ build_install_tag_with_args()
       separator
       echo "make $DIR"
       separator
-      VERBOSE=1 make -j$PARALELLISM || abort "make of $DIR failed"
+      VERBOSE=1 make -j$PARALLELISM || abort "make of $DIR failed"
       separator
       echo "make install $DIR"
       separator

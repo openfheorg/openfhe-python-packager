@@ -20,7 +20,7 @@ docker build                                                   \
     --build-arg OPENFHE_PYTHON_TAG_ARG=${OPENFHE_PYTHON_TAG}   \
     --build-arg WHEEL_MINOR_VERSION_ARG=${WHEEL_MINOR_VERSION} \
     --build-arg WHEEL_TEST_VERSION_ARG=${WHEEL_TEST_VERSION}   \
-    --build-arg PARALELLISM_ARG=${PARALELLISM}                 \
+    --build-arg PARALLELISM_ARG=${PARALLELISM}                 \
     . --progress=plain || abort "${CONTAINER_NAME} failed"
 
 # copy the wheel to the local machine

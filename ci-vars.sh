@@ -14,5 +14,5 @@ WHEEL_MINOR_VERSION=0
 # if WHEEL_TEST_VERSION=5 then the wheel version will be: 1.2.3.9.20.04.dev5
 WHEEL_TEST_VERSION=
 
-# PARALELLISM is used to expedite the build process in ./scripts/common-functions.sh
-PARALELLISM=11
+# PARALLELISM is used to expedite the build process in ./scripts/common-functions.sh
+PARALLELISM=11
