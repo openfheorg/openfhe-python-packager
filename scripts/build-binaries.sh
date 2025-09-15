@@ -7,6 +7,16 @@ ROOT=$(pwd)
 BUILD_DIR=${ROOT}/build
 echo "${0}: BUILD_DIR - ${BUILD_DIR}"
 CMAKE_DEFAULT_ARGS=$(get_cmake_default_args ${BUILD_DIR})
+OS_TYPE="$(uname)"
+if [[ "$OS_TYPE" == "Linux" ]]; then
+    # get compiler version
+    CXX_COMPILER=$(get_compiler_version "g++")
+elif [[ "$OS_TYPE" == "Darwin" ]]; then
+    # get compiler version
+    CXX_COMPILER=$(get_compiler_version "clang++")
+    CMAKE_DEFAULT_ARGS=${CMAKE_DEFAULT_ARGS}" -DCMAKE_CROSSCOMPILING=1 -DRUN_HAVE_STD_REGEX=0 -DRUN_HAVE_POSIX_REGEX=0"
+fi
+echo "Building using the compiler: ${CXX_COMPILER}"
 echo "CMAKE_DEFAULT_ARGS: ${CMAKE_DEFAULT_ARGS}"
 
 ### build openfhe-development

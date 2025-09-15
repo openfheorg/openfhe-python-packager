@@ -3,6 +3,8 @@
 . ./ci-vars.sh
 . ./scripts/common-functions.sh
 
+OS_TYPE="$(uname)"
+
 # WHEEL [OUTPUT] VERSION
 WHEEL_VERSION=$(get_wheel_version ${OS_RELEASE} ${OPENFHE_TAG} ${WHEEL_MINOR_VERSION} ${WHEEL_TEST_VERSION})
 if [ -z "$WHEEL_VERSION" ]; then
@@ -32,33 +34,50 @@ mkdir -p ${WHEEL_ROOT}/openfhe/lib
 
 echo "OPENFHE_PYTHON module"
 INSTALL_PATH=$(get_install_path ${BUILD_DIR})
-# add libOPENFHE*.so to the wheel
+echo "OPENFHE module"
+# add the python module to the wheel
 cp ${INSTALL_PATH}/*.so ${WHEEL_ROOT}/openfhe
 # add __init__.py to the wheel
 cp ${INSTALL_PATH}/__init__.py ${WHEEL_ROOT}/openfhe
+# files necessary for find_package()
+# cp -r ${INSTALL_PATH}/lib/OpenFHE/ ${WHEEL_ROOT}/openfhe/lib
+if [[ "$OS_TYPE" == "Linux" ]]; then
+    # add libOPENFHE*.so to the wheel
+    cp ${INSTALL_PATH}/lib/*.so.1 ${WHEEL_ROOT}/openfhe/lib
+elif [[ "$OS_TYPE" == "Darwin" ]]; then
+    # add libOPENFHE*.dylib to the wheel
+    cp ${INSTALL_PATH}/lib/*.1.dylib ${WHEEL_ROOT}/openfhe/lib
+fi
 # add ci-vars.sh as build-config.txt to the wheel for reference
 cp ${ROOT}/ci-vars.sh ${WHEEL_ROOT}/openfhe/build-config.txt
 chmod 644 ${WHEEL_ROOT}/openfhe/build-config.txt
 
-echo "OPENFHE module"
-cp ${INSTALL_PATH}/lib/*.so.1 ${WHEEL_ROOT}/openfhe/lib
-# files necessary for find_package()
-# cp -r ${INSTALL_PATH}/lib/OpenFHE/ ${WHEEL_ROOT}/openfhe/lib
-
 ############################################################################
 ### Adding all necessary libraries
 ############################################################################
-echo "Adding libgomp.so ..."
-CXX_COMPILER=$(get_compiler_version "g++")
-libgomp_path=$(${CXX_COMPILER} -print-file-name=libgomp.so)
-# Check if the returned string is a path (i.e., not just "libgomp.so")
-if [ "${libgomp_path}" != "libgomp.so" ]; then
-    echo "libgomp for ${CXX_COMPILER} found at: ${libgomp_path}"
-else
-    echo "ERROR: libgomp not found for ${CXX_COMPILER}."
-    exit 1
+echo "Adding OpenMP library ..."
+if [[ "$OS_TYPE" == "Linux" ]]; then
+    CXX_COMPILER=$(get_compiler_version "g++")
+    libomp_path=$(${CXX_COMPILER} -print-file-name=libgomp.so)
+    # Check if the returned string is a path (i.e., not just "libgomp.so")
+    if [ "${libomp_path}" != "libgomp.so" ]; then
+        echo "libgomp for ${CXX_COMPILER} found at: ${libomp_path}"
+    else
+        echo "ERROR: libgomp not found for ${CXX_COMPILER}."
+        exit 1
+    fi
+elif [[ "$OS_TYPE" == "Darwin" ]]; then
+    CXX_COMPILER=$(get_compiler_version "clang++")
+    libomp_path=$(brew --prefix libomp)/lib/libomp.dylib
+    # Check if the returned string is a path (i.e., not just "libomp.dylib")
+    if [ "${libomp_path}" != "/lib/libomp.dylib" ]; then
+        echo "libomp for ${CXX_COMPILER} found at: ${libomp_path}"
+    else
+        echo "ERROR: libomp not found for ${CXX_COMPILER}."
+        exit 1
+    fi
 fi
-cp ${libgomp_path} ${WHEEL_ROOT}/openfhe/lib
+cp ${libomp_path} ${WHEEL_ROOT}/openfhe/lib
 separator
 
 cd ${ROOT}

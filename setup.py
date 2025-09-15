@@ -49,12 +49,13 @@ setup(
     package_dir={'': 'build/wheel-root'},
     include_package_data=True,
     package_data={
-        'openfhe': ['lib/*.so', 'lib/*.so.1', '*.so', 'build-config.txt'],
+        'openfhe': ['lib/*.so', 'lib/*.so.1', 'lib/*.dylib', '*.so', 'build-config.txt'],
         # 'openfhe': ['lib/*.so', 'lib/*.so.1', '*.so', 'build-config.txt', 'lib/OpenFHE/*.cmake'],
     },
     python_requires=f">={sys.version_info.major}.{sys.version_info.minor}",
     classifiers=[
         "Operating System :: POSIX :: Linux",
+        "Operating System :: MacOS :: MacOS X",
         # add other classifiers as needed
     ],
     zip_safe=False,
