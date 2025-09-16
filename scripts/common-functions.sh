@@ -71,10 +71,16 @@ get_long_description()
 
 get_compiler_version()
 {
-  COMPILER=${1} # "g++"" or "gcc"
+  COMPILER="$1"
   # get major compiler version
-  compiler_version=$(${COMPILER} --version | head -n1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1 | cut -d. -f1)
+  compiler_version=$("$COMPILER" --version | head -n1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1)
 
+  if [ -z "$compiler_version" ]; then
+      echo "ERROR: Could not determine version for compiler '$COMPILER'" >&2
+      exit 1
+  fi
+
+  major_version=$(echo "$compiler_version" | cut -d. -f1)
   echo "${COMPILER}-${compiler_version}"
 }
 
@@ -82,20 +88,13 @@ get_compiler_version()
 get_cmake_default_args()
 {
   ROOT=${1}
-  # get compiler version
-  CXX_COMPILER=$(get_compiler_version "g++")
-  C_COMPILER=$(get_compiler_version "gcc")
-
   INSTALL_PATH=$(get_install_path ${ROOT})
-
   # # we have to pass the location of OpenFHE aas an argument
   # OpenFHE_DIR=$(python3 -c "import openfhe; print(openfhe.__path__[0] + '/lib/OpenFHE')")
 
   # CMAKE_DEFAULT_ARGS="-DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DCMAKE_PREFIX_PATH=$OpenFHE_DIR"
 
   CMAKE_DEFAULT_ARGS="-DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DCMAKE_PREFIX_PATH=$INSTALL_PATH"
-  CMAKE_DEFAULT_ARGS=${CMAKE_DEFAULT_ARGS}" -DCMAKE_CXX_COMPILER=${CXX_COMPILER} -DCMAKE_C_COMPILER=${C_COMPILER}"
-
   echo "${CMAKE_DEFAULT_ARGS}"
 }
 
@@ -104,7 +103,8 @@ build_install_tag_with_args()
   DIR=${1}
   TAG=${2}
   CMAKE_ARGS=${3}
-  PARALELLISM=${4}
+  PARALLELISM=${4}
+  OS_TYPE="$(uname)"
 
   cd $DIR || abort "unable to cd into $DIR"
     if [ ! -d build ]; then
@@ -119,13 +119,16 @@ build_install_tag_with_args()
         echo "cmake $DIR with cmake args $CMAKE_ARGS"
         separator
         cmake .. $CMAKE_ARGS || abort "cmake of $DIR failed"
+        if [[ "$OS_TYPE" == "Darwin" ]]; then
+            cmake .. || abort "cmake#2 of $DIR failed"
+        fi
       cd ..
     fi
     cd build || abort "unable to cd into build dir in $DIR"
       separator
       echo "make $DIR"
       separator
-      VERBOSE=1 make -j$PARALELLISM || abort "make of $DIR failed"
+      VERBOSE=1 make -j$PARALLELISM || abort "make of $DIR failed"
       separator
       echo "make install $DIR"
       separator
