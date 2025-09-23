@@ -81,7 +81,7 @@ get_compiler_version()
   fi
 
   major_version=$(echo "$compiler_version" | cut -d. -f1)
-  echo "${COMPILER}-${compiler_version}"
+  echo "${COMPILER}-${major_version}"
 }
 
 # ATTN: get_cmake_default_args MUST NOT print anything else, but ${CMAKE_DEFAULT_ARGS} !!!
