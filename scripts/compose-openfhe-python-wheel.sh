@@ -38,13 +38,38 @@ echo "OPENFHE module"
 # add the python module to the wheel
 cp ${INSTALL_PATH}/*.so ${WHEEL_ROOT}/openfhe
 # add __init__.py to the wheel
-cp ${INSTALL_PATH}/__init__.py ${WHEEL_ROOT}/openfhe
+if [ "$OS_TYPE" = "Linux" ] && [ "$OS_NAME" = "Ubuntu" ] && [ "$OS_RELEASE" = "20.04" ]; then
+
+# add an Ubuntu20 deprecation notice (override __init__.py for the wheel). the warning appears only once, as soon as the library is loaded,
+# and users can also silence the message by setting "OPENFHE_SILENCE_DEPRECATION=1"
+cat << EOF > ${WHEEL_ROOT}/openfhe/__init__.py
+# --- Deprecation notice (shown once per process) ---
+import os as _os
+import warnings as _warnings
+
+if not _os.environ.get("OPENFHE_SILENCE_DEPRECATION"):
+    _flag = "_OPENFHE_DEPRECATION_SHOWN"
+    if not globals().get(_flag):
+        globals()[_flag] = True
+        _warnings.warn("⚠️  Deprecation notice: This is the last OpenFHE wheel built for ${OS_NAME} ${OS_RELEASE}. "
+                       "No new OpenFHE builds will be published for this OS.",
+                       category=UserWarning,
+                       stacklevel=2,
+        )
+
+EOF
+
+    # --- Actual library import ---
+    cat ${INSTALL_PATH}/__init__.py >> ${WHEEL_ROOT}/openfhe/__init__.py
+else
+    cp ${INSTALL_PATH}/__init__.py ${WHEEL_ROOT}/openfhe
+fi
 # files necessary for find_package()
 # cp -r ${INSTALL_PATH}/lib/OpenFHE/ ${WHEEL_ROOT}/openfhe/lib
-if [[ "$OS_TYPE" == "Linux" ]]; then
+if [ "$OS_TYPE" = "Linux" ]; then
     # add libOPENFHE*.so to the wheel
     cp ${INSTALL_PATH}/lib/*.so.1 ${WHEEL_ROOT}/openfhe/lib
-elif [[ "$OS_TYPE" == "Darwin" ]]; then
+elif [ "$OS_TYPE" = "Darwin" ]; then
     # add libOPENFHE*.dylib to the wheel
     cp ${INSTALL_PATH}/lib/*.1.dylib ${WHEEL_ROOT}/openfhe/lib
 fi
@@ -56,7 +81,7 @@ chmod 644 ${WHEEL_ROOT}/openfhe/build-config.txt
 ### Adding all necessary libraries
 ############################################################################
 echo "Adding OpenMP library ..."
-if [[ "$OS_TYPE" == "Linux" ]]; then
+if [ "$OS_TYPE" = "Linux" ]; then
     CXX_COMPILER=$(get_compiler_version "g++")
     libomp_path=$(${CXX_COMPILER} -print-file-name=libgomp.so)
     # Check if the returned string is a path (i.e., not just "libgomp.so")
@@ -66,7 +91,7 @@ if [[ "$OS_TYPE" == "Linux" ]]; then
         echo "ERROR: libgomp not found for ${CXX_COMPILER}."
         exit 1
     fi
-elif [[ "$OS_TYPE" == "Darwin" ]]; then
+elif [ "$OS_TYPE" = "Darwin" ]; then
     CXX_COMPILER=$(get_compiler_version "clang++")
     libomp_path=$(brew --prefix libomp)/lib/libomp.dylib
     # Check if the returned string is a path (i.e., not just "libomp.dylib")
