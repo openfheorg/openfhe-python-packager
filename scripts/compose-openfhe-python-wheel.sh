@@ -3,6 +3,8 @@
 . ./ci-vars.sh
 . ./scripts/common-functions.sh
 
+export PIP_USE_PEP517=1
+
 OS_TYPE="$(uname)"
 
 # WHEEL [OUTPUT] VERSION
@@ -106,7 +108,12 @@ cp ${libomp_path} ${WHEEL_ROOT}/openfhe/lib
 separator
 
 cd ${ROOT}
-python3 setup.py sdist --dist-dir ${BUILD_DIR}/dist bdist_wheel --dist-dir ${BUILD_DIR}/dist
+python3 -m pip wheel . --use-pep517 -w ${BUILD_DIR}/dist
+
+# python3 -m pip wheel . -w ${BUILD_DIR}/dist
+# python3 -m pip sdist  . -d ${BUILD_DIR}/dist
+# python3 -m build --wheel --outdir ${BUILD_DIR}/dist_temp
+# python3 setup.py sdist --dist-dir ${BUILD_DIR}/dist bdist_wheel --dist-dir ${BUILD_DIR}/dist
 
 echo
 echo "Done."
