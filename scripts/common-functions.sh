@@ -119,7 +119,7 @@ build_install_tag_with_args()
         echo "cmake $DIR with cmake args $CMAKE_ARGS"
         separator
         cmake .. $CMAKE_ARGS || abort "cmake of $DIR failed"
-        if [[ "$OS_TYPE" == "Darwin" ]]; then
+        if [ "$OS_TYPE" = "Darwin" ]; then
             cmake .. || abort "cmake#2 of $DIR failed"
         fi
       cd ..
