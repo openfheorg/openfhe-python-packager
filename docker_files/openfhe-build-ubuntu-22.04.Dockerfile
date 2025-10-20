@@ -9,7 +9,8 @@ ARG OPENFHE_TAG_ARG
 ARG OPENFHE_PYTHON_TAG_ARG
 ARG WHEEL_MINOR_VERSION_ARG
 ARG WHEEL_TEST_VERSION_ARG
-ARG PARALLELISM_ARG
+ARG ADDL_CMAKE_FLAGS_ARG
+ARG PARALELLISM_ARG
 
 # Update package lists and install essential utilities (optional)
 RUN apt-get update && apt-get install -y \
@@ -52,7 +53,8 @@ RUN sed -i '/^OPENFHE_TAG=/c\OPENFHE_TAG='${OPENFHE_TAG_ARG} /root/openfhe-pytho
     sed -i '/^OPENFHE_PYTHON_TAG=/c\OPENFHE_PYTHON_TAG='${OPENFHE_PYTHON_TAG_ARG} /root/openfhe-python-packager/ci-vars.sh &&    \
     sed -i '/^WHEEL_MINOR_VERSION=/c\WHEEL_MINOR_VERSION='${WHEEL_MINOR_VERSION_ARG} /root/openfhe-python-packager/ci-vars.sh && \
     sed -i '/^WHEEL_TEST_VERSION=/c\WHEEL_TEST_VERSION='${WHEEL_TEST_VERSION_ARG} /root/openfhe-python-packager/ci-vars.sh &&    \
-    sed -i '/^PARALLELISM=/c\PARALLELISM='${PARALLELISM_ARG} /root/openfhe-python-packager/ci-vars.sh
+    sed -i '/^ADDL_CMAKE_FLAGS=/c\ADDL_CMAKE_FLAGS='${ADDL_CMAKE_FLAGS_ARG} /root/openfhe-python-packager/ci-vars.sh &&          \
+    sed -i '/^PARALELLISM=/c\PARALELLISM='${PARALELLISM_ARG} /root/openfhe-python-packager/ci-vars.sh
 
 # build the wheel
 RUN /root/openfhe-python-packager/build_openfhe_wheel.sh
