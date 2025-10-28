@@ -89,7 +89,7 @@ get_cmake_default_args()
 {
   ROOT=${1}
   INSTALL_PATH=$(get_install_path ${ROOT})
-  # # we have to pass the location of OpenFHE aas an argument
+  # # we have to pass the location of OpenFHE as an argument
   # OpenFHE_DIR=$(python3 -c "import openfhe; print(openfhe.__path__[0] + '/lib/OpenFHE')")
 
   # CMAKE_DEFAULT_ARGS="-DCMAKE_INSTALL_PREFIX=$INSTALL_PATH -DCMAKE_PREFIX_PATH=$OpenFHE_DIR"
@@ -103,7 +103,7 @@ build_install_tag_with_args()
   DIR=${1}
   TAG=${2}
   CMAKE_ARGS=${3}
-  PARALLELISM=${4}
+  PARALELLISM=${4}
   OS_TYPE="$(uname)"
 
   cd $DIR || abort "unable to cd into $DIR"
@@ -128,7 +128,7 @@ build_install_tag_with_args()
       separator
       echo "make $DIR"
       separator
-      VERBOSE=1 make -j$PARALLELISM || abort "make of $DIR failed"
+      VERBOSE=1 make -j$PARALELLISM || abort "make of $DIR failed"
       separator
       echo "make install $DIR"
       separator
