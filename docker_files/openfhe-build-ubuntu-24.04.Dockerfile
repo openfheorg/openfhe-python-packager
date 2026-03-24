@@ -46,15 +46,15 @@ WORKDIR /root/openfhe-python-packager
 # # # RUN git checkout docker-build
 
 # override ci-vars.sh with the correct os name and release
-RUN sed -i '/^OS_NAME=/c\OS_NAME=Ubuntu' /root/openfhe-python-packager/ci-vars.sh
-RUN sed -i '/^OS_RELEASE=/c\OS_RELEASE=24.04' /root/openfhe-python-packager/ci-vars.sh
+RUN sed -i "s|^OS_NAME=.*|OS_NAME=Ubuntu|" /root/openfhe-python-packager/ci-vars.sh
+RUN sed -i "s|^OS_RELEASE=.*|OS_RELEASE=24.04|" /root/openfhe-python-packager/ci-vars.sh
 # other ci-vars.sh overrides
-RUN sed -i '/^OPENFHE_TAG=/c\OPENFHE_TAG='${OPENFHE_TAG_ARG} /root/openfhe-python-packager/ci-vars.sh &&                         \
-    sed -i '/^OPENFHE_PYTHON_TAG=/c\OPENFHE_PYTHON_TAG='${OPENFHE_PYTHON_TAG_ARG} /root/openfhe-python-packager/ci-vars.sh &&    \
-    sed -i '/^WHEEL_MINOR_VERSION=/c\WHEEL_MINOR_VERSION='${WHEEL_MINOR_VERSION_ARG} /root/openfhe-python-packager/ci-vars.sh && \
-    sed -i '/^WHEEL_TEST_VERSION=/c\WHEEL_TEST_VERSION='${WHEEL_TEST_VERSION_ARG} /root/openfhe-python-packager/ci-vars.sh &&    \
-    sed -i '/^ADDL_CMAKE_FLAGS=/c\ADDL_CMAKE_FLAGS='${ADDL_CMAKE_FLAGS_ARG} /root/openfhe-python-packager/ci-vars.sh &&          \
-    sed -i '/^PARALELLISM=/c\PARALELLISM='${PARALELLISM_ARG} /root/openfhe-python-packager/ci-vars.sh
+RUN sed -i "s|^OPENFHE_TAG=.*|OPENFHE_TAG=${OPENFHE_TAG_ARG}|" /root/openfhe-python-packager/ci-vars.sh && \
+    sed -i "s|^OPENFHE_PYTHON_TAG=.*|OPENFHE_PYTHON_TAG=${OPENFHE_PYTHON_TAG_ARG}|" /root/openfhe-python-packager/ci-vars.sh && \
+    sed -i "s|^WHEEL_MINOR_VERSION=.*|WHEEL_MINOR_VERSION=${WHEEL_MINOR_VERSION_ARG}|" /root/openfhe-python-packager/ci-vars.sh && \
+    sed -i "s|^WHEEL_TEST_VERSION=.*|WHEEL_TEST_VERSION=${WHEEL_TEST_VERSION_ARG}|" /root/openfhe-python-packager/ci-vars.sh && \
+    sed -i "s|^ADDL_CMAKE_FLAGS=.*|ADDL_CMAKE_FLAGS=\"${ADDL_CMAKE_FLAGS_ARG}\"|" /root/openfhe-python-packager/ci-vars.sh && \
+    sed -i "s|^PARALELLISM=.*|PARALELLISM=${PARALELLISM_ARG}|" /root/openfhe-python-packager/ci-vars.sh
 
 # build the wheel
 RUN /root/openfhe-python-packager/build_openfhe_wheel.sh
