@@ -21,3 +21,19 @@
    - Run [build_openfhe_wheel.sh](https://github.com/openfheorg/openfhe-python-packager/blob/main/build_openfhe_wheel.sh).
    - The built distribution package will be available in the `./build/dist` directory.
    - The resulting wheel includes an `openfhe/build-config.txt` file with all settings used from ci-vars.sh.
+
+## Intel HEXL-enabled builds
+
+To build a wheel with the Intel HEXL acceleration backend, set `BUILD_HEXL=ON` in
+[ci-vars.sh](ci-vars.sh). When enabled, the build clones
+[openfhe-hexl](https://github.com/openfheorg/openfhe-hexl) at `OPENFHE_HEXL_TAG`,
+overlays its sources onto the `openfhe-development` tree, and configures OpenFHE with
+`-DWITH_INTEL_HEXL=ON` — the same staging that
+[openfhe-configurator](https://github.com/openfheorg/openfhe-configurator) performs.
+
+Make sure `OPENFHE_HEXL_TAG` matches `OPENFHE_TAG` (e.g. `OPENFHE_TAG=v1.5.1` pairs
+with `OPENFHE_HEXL_TAG=v1.5.1.0`).
+
+> **Note:** Intel HEXL targets x86-64 CPUs with AVX-512. A HEXL-enabled wheel will
+> not import on arm64 (e.g. Apple Silicon); build it for an x86-64 target, for
+> example via the Docker build scripts.

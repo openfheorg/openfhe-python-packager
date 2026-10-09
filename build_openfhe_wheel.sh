@@ -21,7 +21,7 @@ cat ./ci-vars.sh
 separator
 
 # build openfhe-development and openfhe-python
-./scripts/build-binaries.sh
+./scripts/build-binaries.sh || abort "build-binaries.sh failed; aborting before packaging to avoid producing an empty wheel"
 
 # build the wheel
 ./scripts/compose-openfhe-python-wheel.sh

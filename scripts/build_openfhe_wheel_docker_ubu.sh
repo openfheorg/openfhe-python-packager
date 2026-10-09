@@ -32,6 +32,8 @@ docker build                                                     \
     --build-arg WHEEL_MINOR_VERSION_ARG="${WHEEL_MINOR_VERSION}" \
     --build-arg WHEEL_TEST_VERSION_ARG="${WHEEL_TEST_VERSION}"   \
     --build-arg ADDL_CMAKE_FLAGS_ARG="${ADDL_CMAKE_FLAGS}"       \
+    --build-arg BUILD_HEXL_ARG="${BUILD_HEXL}"                   \
+    --build-arg OPENFHE_HEXL_TAG_ARG="${OPENFHE_HEXL_TAG}"       \
     --build-arg PARALELLISM_ARG="${PARALELLISM}"                 \
     . --progress=plain || abort "${CONTAINER_NAME} failed"
 

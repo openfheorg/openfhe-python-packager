@@ -2,6 +2,18 @@ OS_NAME=Ubuntu
 OS_RELEASE=24.04
 OPENFHE_TAG=v1.5.1
 OPENFHE_PYTHON_TAG=v1.5.1.0
+
+# Build OpenFHE with the Intel HEXL acceleration backend.
+# Set BUILD_HEXL=ON to overlay the openfhe-hexl sources onto openfhe-development
+# before building (mirrors what openfhe-configurator stages). Leave empty or set
+# to OFF for a standard build.
+# NOTE: Intel HEXL targets x86-64 CPUs with AVX-512. A HEXL-enabled wheel will not
+# import on arm64 (e.g. Apple Silicon); build it for an x86-64 target.
+BUILD_HEXL=OFF
+# openfhe-hexl repository and tag used for the HEXL overlay. The tag should match
+# the OPENFHE_TAG above (e.g. OPENFHE_TAG=v1.5.1 pairs with OPENFHE_HEXL_TAG=v1.5.1.0).
+OPENFHE_HEXL_REPO=https://github.com/openfheorg/openfhe-hexl.git
+OPENFHE_HEXL_TAG=v1.5.1.0
 # subsequent release number for the given OPENFHE_TAG.
 WHEEL_MINOR_VERSION=0
 # Example of a wheel version based on the vars values in this file:

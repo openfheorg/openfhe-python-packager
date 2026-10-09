@@ -31,6 +31,69 @@ clone()
   cd ..
 }
 
+# Check out a specific tag/branch in an already-cloned repository. Idempotent:
+# safe to call before build_install_tag_with_args (which also checks out the tag).
+checkout_tag()
+{
+  DIR=$1
+  TAG=$2
+  separator
+  echo "checkout $DIR tag $TAG"
+  separator
+  cd "$DIR" || abort "checkout_tag: unable to cd into $DIR"
+    git checkout "$TAG" || abort "checkout_tag: unable to checkout $DIR tag $TAG"
+  cd - > /dev/null || abort "checkout_tag: unable to return from $DIR"
+}
+
+# Overlay the openfhe-hexl sources onto a staged openfhe-development tree to
+# produce a HEXL-enabled build. Mirrors the staging performed by
+# openfhe-configurator (openfhe-hexl ships replacement/addition files that are
+# copied over openfhe-development before building).
+overlay_hexl()
+{
+  HEXL_SRC=$1    # path to the checked-out openfhe-hexl tree
+  OPENFHE_DST=$2 # path to the staged openfhe-development tree
+
+  [ -d "$HEXL_SRC" ] || abort "overlay_hexl: openfhe-hexl source $HEXL_SRC not found"
+  [ -d "$OPENFHE_DST" ] || abort "overlay_hexl: openfhe-development tree $OPENFHE_DST not found"
+
+  separator
+  echo "overlay openfhe-hexl ($HEXL_SRC) onto openfhe-development ($OPENFHE_DST)"
+  separator
+
+  # Files and directories openfhe-hexl overlays onto openfhe-development.
+  for item in CMakeLists.txt CMakeLists.User.txt OpenFHEConfig.cmake.in \
+              benchmark configure src third-party; do
+    if [ -e "$HEXL_SRC/$item" ]; then
+      cp -R "$HEXL_SRC/$item" "$OPENFHE_DST/" || abort "overlay_hexl: failed to copy $item"
+    else
+      echo "overlay_hexl: WARNING - $item not present in openfhe-hexl, skipping"
+    fi
+  done
+
+  # The openfhe-hexl CMakeLists.txt hardcodes its own OPENFHE_VERSION_* (e.g. at
+  # tag v1.5.1.0 the patch is stale at 0, yielding version 1.5.0). Overlaying it
+  # downgrades the version openfhe-development reports, so the generated
+  # OpenFHEConfig.cmake no longer satisfies openfhe-python's
+  # find_package(OpenFHE <OPENFHE_TAG without v> REQUIRED) and no .so is built.
+  # Rewrite the version in the overlaid CMakeLists.txt to match OPENFHE_TAG.
+  # (OPENFHE_VERSION on the following line recomputes from these, and
+  # OpenFHEConfig.cmake.in consumes @OPENFHE_VERSION@, so only these need patching.)
+  OVERLAID_CMAKE="$OPENFHE_DST/CMakeLists.txt"
+  VERSION="${OPENFHE_TAG#v}"
+  V_MAJOR=$(echo "$VERSION" | cut -d. -f1)
+  V_MINOR=$(echo "$VERSION" | cut -d. -f2)
+  V_PATCH=$(echo "$VERSION" | cut -d. -f3)
+  if [ -n "$V_MAJOR" ] && [ -n "$V_MINOR" ] && [ -n "$V_PATCH" ]; then
+    echo "overlay_hexl: setting OPENFHE_VERSION to $V_MAJOR.$V_MINOR.$V_PATCH (from OPENFHE_TAG=$OPENFHE_TAG) in overlaid CMakeLists.txt"
+    sed -i "s|^set(OPENFHE_VERSION_MAJOR .*)|set(OPENFHE_VERSION_MAJOR ${V_MAJOR})|" "$OVERLAID_CMAKE" || abort "overlay_hexl: failed to patch OPENFHE_VERSION_MAJOR"
+    sed -i "s|^set(OPENFHE_VERSION_MINOR .*)|set(OPENFHE_VERSION_MINOR ${V_MINOR})|" "$OVERLAID_CMAKE" || abort "overlay_hexl: failed to patch OPENFHE_VERSION_MINOR"
+    sed -i "s|^set(OPENFHE_VERSION_PATCH .*)|set(OPENFHE_VERSION_PATCH ${V_PATCH})|" "$OVERLAID_CMAKE" || abort "overlay_hexl: failed to patch OPENFHE_VERSION_PATCH"
+  else
+    echo "overlay_hexl: WARNING - OPENFHE_TAG='$OPENFHE_TAG' did not yield a 3-component version; leaving overlaid CMakeLists.txt version unchanged"
+  fi
+}
+
 # ATTN: get_install_path MUST NOT print anything else, but ${INSTALL_PATH} !!!
 get_install_path()
 {
@@ -108,10 +171,19 @@ build_install_tag_with_args()
 
   cd $DIR || abort "unable to cd into $DIR"
     if [ ! -d build ]; then
-      separator
-      echo "checkout $DIR tag $TAG"
-      separator
-      git checkout $TAG || abort "unable to checkout $DIR tag $TAG"
+      # Skip the checkout if HEAD is already at the requested tag. This matters
+      # for the HEXL overlay path, where the tag is checked out and overlay files
+      # are copied in beforehand; a redundant `git checkout` would revert them.
+      if [ "$(git rev-parse --verify HEAD)" = "$(git rev-parse --verify "$TAG")" ]; then
+        separator
+        echo "$DIR already at tag $TAG, skipping checkout"
+        separator
+      else
+        separator
+        echo "checkout $DIR tag $TAG"
+        separator
+        git checkout $TAG || abort "unable to checkout $DIR tag $TAG"
+      fi
 
       mkdir build || abort "unable to create build dir in $DIR"
       cd build || abort "unable to cd into build dir in $DIR"

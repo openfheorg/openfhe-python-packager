@@ -2,6 +2,12 @@ import os
 import subprocess
 import sys
 from setuptools import setup, find_packages
+from setuptools.dist import Distribution
+
+class BinaryDistribution(Distribution):
+    """Force setuptools to treat this distribution as containing native code."""
+    def has_ext_modules(self):
+        return True
 
 def get_ci_vars(filepath):
     ci_vars = {}
@@ -49,7 +55,9 @@ setup(
     package_dir={'': 'build/wheel-root'},
     include_package_data=True,
     package_data={
-        'openfhe': ['lib/*.so', 'lib/*.so.1', 'lib/*.dylib', '*.so', 'build-config.txt'],
+        # lib/*.so.* captures both the OpenFHE sonames (e.g. .so.1) and the
+        # version-suffixed Intel HEXL library (libhexl.so.1.2.6) for HEXL builds.
+        'openfhe': ['lib/*.so', 'lib/*.so.*', 'lib/*.dylib', '*.so', 'build-config.txt'],
         # 'openfhe': ['lib/*.so', 'lib/*.so.1', '*.so', 'build-config.txt', 'lib/OpenFHE/*.cmake'],
     },
     python_requires=f">={sys.version_info.major}.{sys.version_info.minor}",
@@ -59,5 +67,6 @@ setup(
         # add other classifiers as needed
     ],
     zip_safe=False,
+    distclass=BinaryDistribution,
 )
 
