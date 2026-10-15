@@ -10,7 +10,7 @@
 OS_NAME="ubuntu"
 if [ $# -eq 0 ]; then
     echo "Usage: $0 <OS_RELEASE>  e.g. 22.04, 24.04" >&2
-#   echo "Or create symplinks and call via symlink named ubuntu20.sh / ubuntu22.sh / ubuntu24.sh ..." >&2
+#   echo "Or create symplinks and call via symlink named ubuntu22.sh / ubuntu24.sh ..." >&2
     exit 2
 fi
 OS_RELEASE="$1"
