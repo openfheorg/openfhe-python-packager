@@ -32,8 +32,13 @@ RUN apt-get update && apt-get install -y \
 # Set a working directory inside the container (optional)
 WORKDIR /root
 
-# clone openfhe-python-packager to /root
-RUN git clone https://github.com/openfheorg/openfhe-python-packager.git
+# clone openfhe-python-packager to /root. PACKAGER_BRANCH_ARG selects the packager
+# branch/tag the wheel is built with (default: the default branch); without it, local
+# packager changes would silently not apply to docker-built wheels.
+ARG PACKAGER_BRANCH_ARG=HEAD
+RUN git clone https://github.com/openfheorg/openfhe-python-packager.git \
+    && cd openfhe-python-packager \
+    && git checkout "${PACKAGER_BRANCH_ARG}"
 
 # Set the default command to run when the container starts
 ### CMD ["/bin/bash"]

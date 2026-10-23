@@ -83,7 +83,11 @@ cp ${libomp_path} ${WHEEL_ROOT}/openfhe/lib
 separator
 
 cd ${ROOT}
-python3 -m pip wheel . --use-pep517 -w ${BUILD_DIR}/dist
+# --no-deps: build only the openfhe wheel. Without it pip also downloads a wheel for
+# every declared dependency into the output directory, which consumers that expect a
+# single wheel there (the openfhe-python docs builder) reject. The dependencies stay
+# recorded in the wheel's metadata and are resolved at install time.
+python3 -m pip wheel . --use-pep517 --no-deps -w ${BUILD_DIR}/dist
 
 # python3 -m pip wheel . -w ${BUILD_DIR}/dist
 # python3 -m pip sdist  . -d ${BUILD_DIR}/dist
