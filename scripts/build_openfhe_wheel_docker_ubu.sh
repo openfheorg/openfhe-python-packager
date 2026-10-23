@@ -33,6 +33,7 @@ docker build                                                     \
     --build-arg WHEEL_TEST_VERSION_ARG="${WHEEL_TEST_VERSION}"   \
     --build-arg ADDL_CMAKE_FLAGS_ARG="${ADDL_CMAKE_FLAGS}"       \
     --build-arg PARALELLISM_ARG="${PARALELLISM}"                 \
+    --build-arg PACKAGER_BRANCH_ARG="${PACKAGER_BRANCH:-HEAD}"   \
     . --progress=plain || abort "${CONTAINER_NAME} failed"
 
 # copy the wheel to the local machine
