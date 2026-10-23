@@ -22,6 +22,19 @@ def get_ci_vars(filepath):
 # get values from ci-vars.sh
 filepath = os.path.join(os.path.dirname(os.path.abspath(__file__)), "ci-vars.sh")
 ci_vars = get_ci_vars(filepath)
+
+def get_install_requires():
+    # Dependency ownership lives in the openfhe-python repo itself: its
+    # requirements.txt (read from the checkout this build cloned) becomes the
+    # wheel's install_requires. Tags that predate the file fall back to no
+    # dependencies, matching the metadata of the wheels built before it existed.
+    req_file = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                            "build", "openfhe-python", "requirements.txt")
+    if not os.path.exists(req_file):
+        return []
+    with open(req_file, 'r') as f:
+        return [line.split('#', 1)[0].strip() for line in f
+                if line.split('#', 1)[0].strip()]
 ###
 get_version = (
     'bash -c "source ./scripts/common-functions.sh && get_wheel_version \\"{}\\" \\"{}\\" \\"{}\\" \\"{}\\""'
@@ -52,6 +65,7 @@ setup(
         'openfhe': ['lib/*.so', 'lib/*.so.1', 'lib/*.dylib', '*.so', 'build-config.txt'],
         # 'openfhe': ['lib/*.so', 'lib/*.so.1', '*.so', 'build-config.txt', 'lib/OpenFHE/*.cmake'],
     },
+    install_requires=get_install_requires(),
     python_requires=f">={sys.version_info.major}.{sys.version_info.minor}",
     classifiers=[
         "Operating System :: POSIX :: Linux",
