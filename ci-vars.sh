@@ -20,4 +20,8 @@ WHEEL_TEST_VERSION=
 ADDL_CMAKE_FLAGS=
 
 # PARALELLISM is used to expedite the build process in ./scripts/common-functions.sh
-PARALELLISM=11
+if [ "${READTHEDOCS:-}" = "True" ]; then
+    PARALELLISM=2
+else
+    PARALELLISM=11
+fi
