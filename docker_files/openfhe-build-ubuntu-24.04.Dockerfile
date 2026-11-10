@@ -11,6 +11,7 @@ ARG WHEEL_MINOR_VERSION_ARG
 ARG WHEEL_TEST_VERSION_ARG
 ARG ADDL_CMAKE_FLAGS_ARG
 ARG PARALELLISM_ARG
+ARG PYTHON_VERSION_ARG
 
 # Update package lists and install essential utilities (optional)
 RUN apt-get update && apt-get install -y \
@@ -21,13 +22,18 @@ RUN apt-get update && apt-get install -y \
         build-essential \
         cmake \
         && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install -y \
-        python3 \
-        python3-pip \
-        && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install -y \
-        python3-venv \
-        && rm -rf /var/lib/apt/lists/*
+# Use the version from ci-vars.sh when set; otherwise use Ubuntu's default Python.
+RUN if [ -n "${PYTHON_VERSION_ARG}" ]; then \
+        apt-get update && apt-get install -y software-properties-common && \
+        add-apt-repository -y ppa:deadsnakes/ppa && \
+        apt-get update && apt-get install -y \
+            python${PYTHON_VERSION_ARG} \
+            python${PYTHON_VERSION_ARG}-venv \
+            python${PYTHON_VERSION_ARG}-dev; \
+    else \
+        apt-get update && apt-get install -y python3 python3-venv python3-dev; \
+    fi \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set a working directory inside the container (optional)
 WORKDIR /root
@@ -59,7 +65,8 @@ RUN sed -i "s|^OPENFHE_TAG=.*|OPENFHE_TAG=${OPENFHE_TAG_ARG}|" /root/openfhe-pyt
     sed -i "s|^WHEEL_MINOR_VERSION=.*|WHEEL_MINOR_VERSION=${WHEEL_MINOR_VERSION_ARG}|" /root/openfhe-python-packager/ci-vars.sh && \
     sed -i "s|^WHEEL_TEST_VERSION=.*|WHEEL_TEST_VERSION=${WHEEL_TEST_VERSION_ARG}|" /root/openfhe-python-packager/ci-vars.sh && \
     sed -i "s|^ADDL_CMAKE_FLAGS=.*|ADDL_CMAKE_FLAGS=\"${ADDL_CMAKE_FLAGS_ARG}\"|" /root/openfhe-python-packager/ci-vars.sh && \
-    sed -i "s|^PARALELLISM=.*|PARALELLISM=${PARALELLISM_ARG}|" /root/openfhe-python-packager/ci-vars.sh
+    sed -i "s|^PARALELLISM=.*|PARALELLISM=${PARALELLISM_ARG}|" /root/openfhe-python-packager/ci-vars.sh && \
+    sed -i "s|^PYTHON_VERSION=.*|PYTHON_VERSION=${PYTHON_VERSION_ARG}|" /root/openfhe-python-packager/ci-vars.sh
 
 # build the wheel
 RUN /root/openfhe-python-packager/build_openfhe_wheel.sh

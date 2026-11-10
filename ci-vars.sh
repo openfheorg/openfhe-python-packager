@@ -1,5 +1,8 @@
 OS_NAME=Ubuntu
 OS_RELEASE=24.04
+# CPython version the wheel is built with. Leave empty (or remove this setting) to use the default python3 on the machine.
+# A specified version is installed from the deadsnakes PPA on Ubuntu.
+PYTHON_VERSION=3.13
 OPENFHE_TAG=v1.6.1
 OPENFHE_PYTHON_TAG=v1.6.1.0
 # subsequent release number for the given OPENFHE_TAG.

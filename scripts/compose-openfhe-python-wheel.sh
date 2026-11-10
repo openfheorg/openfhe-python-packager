@@ -5,6 +5,12 @@
 
 export PIP_USE_PEP517=1
 
+if [ -z "${PYTHON_EXE:-}" ]; then
+    PYTHON_EXE=python3
+    [ -z "${PYTHON_VERSION:-}" ] || PYTHON_EXE="/usr/bin/python${PYTHON_VERSION}"
+fi
+command -v "${PYTHON_EXE}" >/dev/null 2>&1 || abort "${PYTHON_EXE} not found"
+
 OS_TYPE="$(uname)"
 
 # WHEEL [OUTPUT] VERSION
@@ -87,12 +93,7 @@ cd ${ROOT}
 # every declared dependency into the output directory, which consumers that expect a
 # single wheel there (the openfhe-python docs builder) reject. The dependencies stay
 # recorded in the wheel's metadata and are resolved at install time.
-python3 -m pip wheel . --use-pep517 --no-deps -w ${BUILD_DIR}/dist
-
-# python3 -m pip wheel . -w ${BUILD_DIR}/dist
-# python3 -m pip sdist  . -d ${BUILD_DIR}/dist
-# python3 -m build --wheel --outdir ${BUILD_DIR}/dist_temp
-# python3 setup.py sdist --dist-dir ${BUILD_DIR}/dist bdist_wheel --dist-dir ${BUILD_DIR}/dist
+"${PYTHON_EXE}" -m pip wheel . --use-pep517 --no-deps -w ${BUILD_DIR}/dist
 
 separator
 # Install the wheel into a clean virtual environment and import it. This catches
@@ -102,7 +103,7 @@ separator
 echo "Verifying the wheel in a clean virtual environment ..."
 VENV_DIR="${BUILD_DIR}/wheel-verify-venv"
 rm -rf "${VENV_DIR}"
-python3 -m venv "${VENV_DIR}"
+"${PYTHON_EXE}" -m venv "${VENV_DIR}"
 "${VENV_DIR}/bin/pip" install --quiet ${BUILD_DIR}/dist/openfhe-*.whl || abort "wheel install failed"
 "${VENV_DIR}/bin/python" -c "import openfhe; print('wheel verification OK: openfhe', openfhe.__version__)" \
     || abort "importing openfhe from the installed wheel failed"

@@ -29,7 +29,12 @@ build_install_tag_with_args ${OPENFHE_DIR} ${OPENFHE_TAG} "${OPENFHE_CMAKE_ARGS}
 ### build openfhe-python
 OPENFHE_PYTHON_REPO="https://github.com/openfheorg/openfhe-python.git"
 OPENFHE_PYTHON_DIR="${BUILD_DIR}/openfhe-python"
-OPENFHE_PYTHON_CMAKE_ARGS=${CMAKE_DEFAULT_ARGS}
+if [ -z "${PYTHON_EXE:-}" ]; then
+    PYTHON_EXE=python3
+    [ -z "${PYTHON_VERSION:-}" ] || PYTHON_EXE="/usr/bin/python${PYTHON_VERSION}"
+fi
+PYTHON_PATH=$(command -v "${PYTHON_EXE}") || abort "${PYTHON_EXE} not found"
+OPENFHE_PYTHON_CMAKE_ARGS="${CMAKE_DEFAULT_ARGS} -DPYTHON_EXECUTABLE_PATH=${PYTHON_PATH}"
 
 clone ${OPENFHE_PYTHON_REPO} ${OPENFHE_PYTHON_DIR}
 build_install_tag_with_args ${OPENFHE_PYTHON_DIR} ${OPENFHE_PYTHON_TAG} "${OPENFHE_PYTHON_CMAKE_ARGS}" ${PARALELLISM}
